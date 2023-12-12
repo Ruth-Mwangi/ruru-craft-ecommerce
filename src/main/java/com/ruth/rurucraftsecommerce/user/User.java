@@ -5,6 +5,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -29,6 +30,9 @@ public class User implements UserDetails {
 
     @Column(nullable = false)
     private String lastName;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private Set<UserPermission> userPermissions;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -108,5 +112,12 @@ public class User implements UserDetails {
 
     public String getFullName() {
         return firstName + ' ' +  lastName;
+    }
+    public Set<UserPermission> getUserPermissions() {
+        return userPermissions;
+    }
+
+    public void setUserPermissions(Set<UserPermission> userPermissions) {
+        this.userPermissions = userPermissions;
     }
 }
