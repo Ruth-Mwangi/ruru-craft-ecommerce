@@ -1,0 +1,40 @@
+#services:
+#  mysql:
+#    image: mysql:latest
+#    container_name: mysql-container
+#    restart: always
+#    environment:
+#      MYSQL_ROOT_PASSWORD: admin
+#      MYSQL_DATABASE: ecommerce
+#      MYSQL_USER: keycloak
+#      MYSQL_PASSWORD: admin
+#    ports:
+#      - "3307:3306"
+#    volumes:
+#      - mysql-data:/var/lib/mysql
+#
+#  keycloak:
+#    image: quay.io/keycloak/keycloak:latest
+#    container_name: keycloak-container
+#    restart: unless-stopped
+#    environment:
+#      KEYCLOAK_ADMIN: admin
+#      KEYCLOAK_ADMIN_PASSWORD: admin
+#      KEYCLOAK_USER: admin
+#      KEYCLOAK_PASSWORD: admin
+#      DB_VENDOR: MYSQL
+#      DB_ADDR: mysql
+#      DB_PORT: 3306
+#      DB_DATABASE: ecommerce
+#      DB_USER: keycloak
+#      DB_PASSWORD: admin
+#
+#    command: ["start", "--dev"]
+#
+#    ports:
+#      - "8080:8080"
+#    depends_on:
+#      - mysql
+#
+#volumes:
+#  mysql-data:

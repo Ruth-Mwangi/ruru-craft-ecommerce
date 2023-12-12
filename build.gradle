@@ -5,6 +5,8 @@ plugins {
 	id 'com.netflix.dgs.codegen' version '6.0.3'
 	id 'org.asciidoctor.jvm.convert' version '3.3.2'
 }
+apply plugin: 'org.springframework.boot'
+
 
 group = 'com.ruth'
 version = '0.0.1-SNAPSHOT'
@@ -30,23 +32,27 @@ ext {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-data-rest'
-	implementation 'org.springframework.boot:spring-boot-starter-graphql'
 	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-authorization-server'
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation group: 'org.springframework.security.oauth.boot', name: 'spring-security-oauth2-autoconfigure', version: '2.6.8'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.session:spring-session-jdbc'
 	compileOnly 'org.projectlombok:lombok'
-	developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
+	// JWT API
+	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+
+	// JWT Implementation
+	implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
+
+	// JWT Jackson (JSON serialization/deserialization)
+	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework:spring-webflux'
-	testImplementation 'org.springframework.graphql:spring-graphql-test'
 	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 	testImplementation 'org.springframework.security:spring-security-test'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
@@ -72,4 +78,3 @@ generateJava {
 	packageName = 'com.ruth.rurucraftsecommerce.codegen'
 	generateClient = true
 }
-
