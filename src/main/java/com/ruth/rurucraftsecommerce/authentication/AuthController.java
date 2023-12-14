@@ -1,10 +1,12 @@
 package com.ruth.rurucraftsecommerce.authentication;
 
+import com.ruth.rurucraftsecommerce.response.Response;
 import com.ruth.rurucraftsecommerce.user.User;
 import com.ruth.rurucraftsecommerce.user.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -41,35 +43,50 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthDTO.LoginRequest userLogin)  {
 
-        Authentication authentication =
-                authenticationManager
-                        .authenticate(new UsernamePasswordAuthenticationToken(
-                                userLogin.getUsername(),
-                                userLogin.getPassword()));
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        try{
+            Authentication authentication =
+                    authenticationManager
+                            .authenticate(new UsernamePasswordAuthenticationToken(
+                                    userLogin.getUsername(),
+                                    userLogin.getPassword()));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        AuthUser userDetails = (AuthUser) authentication.getPrincipal();
+            AuthUser userDetails = (AuthUser) authentication.getPrincipal();
 
-        String token = authService.generateToken(authentication);
+            String token = authService.generateToken(authentication);
 
-        AuthDTO.Response response = new AuthDTO.Response("User logged in successfully", token);
+            AuthDTO.Response response = new AuthDTO.Response("User logged in successfully", token);
 
-        return ResponseEntity.ok(response);
+            return ResponseEntity.ok(response);
+        }catch (Exception e){
+
+            Response response = new Response(HttpStatus.BAD_REQUEST.toString(), e.getMessage(), null);
+            return ResponseEntity.badRequest().body(response);
+        }
+
+
     }
     @PostMapping("/register")
     public ResponseEntity<?> login(@RequestBody User registerUser) throws IllegalAccessException {
 
-        User user = new User();
-        user.setUsername(registerUser.getUsername());
-        user.setLastName(registerUser.getLastName());
-        user.setFirstName(registerUser.getFirstName());
-        user.setPassword(passwordEncoder.encode(registerUser.getPassword()));
+        try{
+            User user = new User();
+            user.setUsername(registerUser.getUsername());
+            user.setLastName(registerUser.getLastName());
+            user.setFirstName(registerUser.getFirstName());
+            user.setPassword(passwordEncoder.encode(registerUser.getPassword()));
+
+            User createdUser=userRepository.save(user);
+            createdUser.setPassword(null);
+            Response response = new Response(HttpStatus.OK.toString(),"User registered successfully, proceed to log in.",createdUser);
 
 
-        userRepository.save(user);
-        AuthDTO.RegistrationResponse response = new AuthDTO.RegistrationResponse("User registered successfully, proceed to log in.", user.toString());
+            return ResponseEntity.ok(response);
 
+        }catch (Exception e) {
+            Response response = new Response(HttpStatus.BAD_REQUEST.toString(), e.getCause().getCause().getMessage(), null);
+            return ResponseEntity.badRequest().body(response);
+        }
 
-        return ResponseEntity.ok(response);
     }
 }
