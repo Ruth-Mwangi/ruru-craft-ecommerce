@@ -1,6 +1,6 @@
 package com.ruth.rurucraftsecommerce.response;
 
-public class Response {
+public class Response{
     private String statusCode;
     private String message;
     private Object data;

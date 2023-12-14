@@ -1,5 +1,7 @@
 package com.ruth.rurucraftsecommerce.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -7,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.Set;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 @Entity
 @Table(name = "users")
 public class User {
@@ -17,6 +20,7 @@ public class User {
     @Column(unique = true,name = "email",nullable = false)
     private String username;
 
+//    @JsonIgnore
     @Column(nullable = false)
     private String password;
     @Column(name = "account_non_locked", nullable = false)
@@ -31,6 +35,7 @@ public class User {
     @Column(nullable = false)
     private String lastName;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private Set<UserPermission> userPermissions;
 

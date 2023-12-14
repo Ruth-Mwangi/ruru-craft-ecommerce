@@ -84,7 +84,7 @@ public class AuthController {
             return ResponseEntity.ok(response);
 
         }catch (Exception e) {
-            Response response = new Response(HttpStatus.BAD_REQUEST.toString(), e.getCause().getCause().getMessage(), null);
+            Response response = new Response(HttpStatus.BAD_REQUEST.toString(), e.getCause().getMessage(), null);
             return ResponseEntity.badRequest().body(response);
         }
 
