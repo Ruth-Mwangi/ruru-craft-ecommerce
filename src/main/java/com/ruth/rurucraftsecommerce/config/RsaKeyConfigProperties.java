@@ -49,8 +49,6 @@ public class RsaKeyConfigProperties {
             // Remove whitespaces and newlines
             keyContent = keyContent.replaceAll("\\s", "");
 
-            // Print the content of the public key for debugging
-            System.out.println("Public key content:\n" + keyContent);
 
             // Generate the public key
             byte[] decodedKey = Base64.getDecoder().decode(keyContent);
@@ -81,8 +79,6 @@ public class RsaKeyConfigProperties {
             // Remove whitespaces and newlines
             keyContent = keyContent.replaceAll("\\s", "");
 
-            // Print the content of the private key for debugging
-            System.out.println("Private key content:\n" + keyContent);
 
             // Generate the private key
             byte[] decodedKey = Base64.getDecoder().decode(keyContent);

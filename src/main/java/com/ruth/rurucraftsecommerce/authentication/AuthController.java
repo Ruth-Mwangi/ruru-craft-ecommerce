@@ -60,7 +60,7 @@ public class AuthController {
             return ResponseEntity.ok(response);
         }catch (Exception e){
 
-            Response response = new Response(HttpStatus.BAD_REQUEST.toString(), e.getMessage(), null);
+            Response response = new Response(HttpStatus.BAD_REQUEST.value(), e.getMessage(), null);
             return ResponseEntity.badRequest().body(response);
         }
 
@@ -70,21 +70,18 @@ public class AuthController {
     public ResponseEntity<?> login(@RequestBody User registerUser) throws IllegalAccessException {
 
         try{
-            User user = new User();
-            user.setUsername(registerUser.getUsername());
-            user.setLastName(registerUser.getLastName());
-            user.setFirstName(registerUser.getFirstName());
-            user.setPassword(passwordEncoder.encode(registerUser.getPassword()));
 
-            User createdUser=userRepository.save(user);
+            registerUser.setPassword(passwordEncoder.encode(registerUser.getPassword()));
+
+            User createdUser=userRepository.save(registerUser);
             createdUser.setPassword(null);
-            Response response = new Response(HttpStatus.OK.toString(),"User registered successfully, proceed to log in.",createdUser);
+            Response response = new Response(HttpStatus.OK.value(),"User registered successfully, proceed to log in.",createdUser);
 
 
             return ResponseEntity.ok(response);
 
         }catch (Exception e) {
-            Response response = new Response(HttpStatus.BAD_REQUEST.toString(), e.getCause().getMessage(), null);
+            Response response = new Response(HttpStatus.BAD_REQUEST.value(), e.getCause().getMessage(), null);
             return ResponseEntity.badRequest().body(response);
         }
 

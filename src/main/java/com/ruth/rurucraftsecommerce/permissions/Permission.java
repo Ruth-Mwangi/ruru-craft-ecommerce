@@ -1,4 +1,4 @@
-package com.ruth.rurucraftsecommerce.user;
+package com.ruth.rurucraftsecommerce.permissions;
 
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;

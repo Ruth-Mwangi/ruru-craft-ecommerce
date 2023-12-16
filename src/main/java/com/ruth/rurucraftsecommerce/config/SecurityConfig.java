@@ -58,7 +58,6 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, HandlerMappingIntrospector introspector) throws Exception {
-        System.out.println("Fail2");
         return http
                 .csrf(csrf -> {
                     csrf.disable();
