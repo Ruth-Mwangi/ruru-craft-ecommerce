@@ -31,7 +31,7 @@ jobs:
         git push --set-upstream origin auto-pr-dev
         hub pull-request -b dev -h auto-pr-dev -m "Automated Pull Request to dev" || true
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
   merge_to_main:
     needs: create_pull_request
@@ -53,4 +53,4 @@ jobs:
         git merge --no-ff auto-pr-dev
         git push origin main
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
