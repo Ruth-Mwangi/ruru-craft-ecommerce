@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - '*'
-      - '!main'
 
 jobs:
   create_pull_request:
@@ -19,17 +18,10 @@ jobs:
         git config user.name "${{ github.actor }}"
         git config user.email "${{ github.actor }}@users.noreply.github.com"
 
-    - name: Install hub
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y hub
-
-
     - name: Create Pull Request to dev
       run: |
-        git checkout -b auto-pr-dev
-        git push --set-upstream origin auto-pr-dev
-        hub pull-request -b dev -h auto-pr-dev -m "Automated Pull Request to dev" || true
+        git push origin HEAD:refs/heads/dev -f
+        hub pull-request -b dev -h "${{ github.actor }}:dev" -m "Automated Pull Request to dev" || true
       env:
         GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
@@ -48,9 +40,9 @@ jobs:
 
     - name: Merge Pull Request to main
       run: |
+        git fetch origin dev:dev
         git checkout main
-        git pull origin main
-        git merge --no-ff auto-pr-dev
+        git merge --no-ff dev
         git push origin main
       env:
         GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
