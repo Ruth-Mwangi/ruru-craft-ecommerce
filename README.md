@@ -17,6 +17,20 @@ This project is an eCommerce site for selling  items.
 
 - **Security:**
   - Public and private keys for encryption are stored in the `certs` folder.
+    ```bash
+    # Generate a new RSA private key using the following command:
+    openssl genpkey -algorithm RSA -out private-key.pem
+
+    # Convert private key to PKCS#8 format and save to a temporary file
+    openssl pkcs8 -topk8 -inform PEM -outform PEM -in private-key.pem -out private-key-temp.pem -nocrypt
+    
+    # Replace the original private key file with the temporary file
+    mv private-key-temp.pem private-key.pem
+    
+    # Extract public key from private key in PKCS#8 format
+    openssl rsa -pubout -in private-key.pem -out public-key.pem
+    ```
+
 
 ## Prerequisites
 
