@@ -1,0 +1,55 @@
+name: Auto Pull Request
+
+on:
+  push:
+    branches:
+      - '*'
+      - '!dev'  # Update this line if your default branch is 'master'
+
+jobs:
+  create_pull_request:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Git
+      run: |
+        git config user.name "${{ github.actor }}"
+        git config user.email "${{ github.actor }}@users.noreply.github.com"
+
+    - name: Install hub
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y hub
+
+    - name: Create Pull Request to dev
+      run: |
+        git checkout -b auto-pr-dev
+        git push --set-upstream origin auto-pr-dev
+        hub pull-request -b dev -h auto-pr-dev -m "Automated Pull Request to dev" || true
+      env:
+        GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+
+  merge_to_main:
+    needs: create_pull_request
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Git
+      run: |
+        git config user.name "${{ github.actor }}"
+        git config user.email "${{ github.actor }}@users.noreply.github.com"
+
+    - name: Merge Pull Request to dev
+      run: |
+        git checkout dev
+        git pull origin dev
+        git merge --no-ff auto-pr-dev
+        git push origin dev
+      env:
+        GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
