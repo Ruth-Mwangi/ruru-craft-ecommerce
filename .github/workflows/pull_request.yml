@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - '*'
+      - '!main'
 
 jobs:
   create_pull_request:
@@ -26,8 +27,9 @@ jobs:
 
     - name: Create Pull Request to dev
       run: |
-        git push origin HEAD:refs/heads/dev -f
-        hub pull-request -b dev -h "${{ github.actor }}:dev" -m "Automated Pull Request to dev" || true
+        git checkout -b auto-pr-dev
+        git push --set-upstream origin auto-pr-dev
+        hub pull-request -b dev -h auto-pr-dev -m "Automated Pull Request to dev" || true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -46,9 +48,9 @@ jobs:
 
     - name: Merge Pull Request to main
       run: |
-        git fetch origin dev:dev
         git checkout main
-        git merge --no-ff dev
+        git pull origin main
+        git merge --no-ff auto-pr-dev
         git push origin main
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
