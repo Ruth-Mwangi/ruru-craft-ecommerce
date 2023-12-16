@@ -1,12 +1,13 @@
 package com.ruth.rurucraftsecommerce.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.ruth.rurucraftsecommerce.permissions.UserPermission;
 import jakarta.persistence.*;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
 import java.util.Set;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 @Entity
 @Table(name = "users")
 public class User {
@@ -31,8 +32,25 @@ public class User {
     @Column(nullable = false)
     private String lastName;
 
+    @Column(nullable = false)
+    private String phoneNumber;
+
+    @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private Set<UserPermission> userPermissions;
+
+    public User() {
+    }
+
+    public User(Integer id, String username, boolean accountNonLocked, boolean enabled, String firstName, String lastName, String phoneNumber) {
+        this.id = id;
+        this.username = username;
+        this.accountNonLocked = accountNonLocked;
+        this.enabled = enabled;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.phoneNumber = phoneNumber;
+    }
 
     public Integer getId() {
         return id;
@@ -96,6 +114,14 @@ public class User {
 
     public void setUserPermissions(Set<UserPermission> userPermissions) {
         this.userPermissions = userPermissions;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     @Override

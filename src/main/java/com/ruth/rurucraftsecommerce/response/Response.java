@@ -1,24 +1,24 @@
 package com.ruth.rurucraftsecommerce.response;
 
-public class Response {
-    private String statusCode;
+public class Response{
+    private Integer statusCode;
     private String message;
     private Object data;
 
     public Response() {
     }
 
-    public Response(String statusCode, String message, Object data) {
+    public Response(Integer statusCode, String message, Object data) {
         this.statusCode = statusCode;
         this.message = message;
         this.data = data;
     }
 
-    public String getStatusCode() {
+    public Integer getStatusCode() {
         return statusCode;
     }
 
-    public void setStatusCode(String statusCode) {
+    public void setStatusCode(Integer statusCode) {
         this.statusCode = statusCode;
     }
 

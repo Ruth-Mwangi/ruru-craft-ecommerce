@@ -1,5 +1,6 @@
-package com.ruth.rurucraftsecommerce.user;
+package com.ruth.rurucraftsecommerce.permissions;
 
+import com.ruth.rurucraftsecommerce.user.User;
 import jakarta.persistence.*;
 
 @Entity
