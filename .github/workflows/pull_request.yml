@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - '*'
-      - '!dev'  # Update this line if your default branch is 'master'
+      - '!main'  # Update this line if your default branch is 'master'
 
 jobs:
   create_pull_request:
