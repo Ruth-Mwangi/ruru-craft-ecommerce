@@ -3,6 +3,13 @@ package com.ruth.rurucraftsecommerce.authentication;
 import com.ruth.rurucraftsecommerce.response.Response;
 import com.ruth.rurucraftsecommerce.user.User;
 import com.ruth.rurucraftsecommerce.user.UserRepository;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +27,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "1. Authentication",description = "Creation and authentication of users")
 @RestController
 @RequestMapping("/api/auth")
 @Validated
+
 public class AuthController {
     private static final Logger log = LoggerFactory.getLogger(AuthController.class);
 
@@ -40,6 +49,16 @@ public class AuthController {
     @Autowired
     private JwtDecoder jwtDecoder;
 
+    @Operation(summary = "This endpoint is used for login and authentication.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Successful operation",
+                content = @Content(mediaType = "application/json",
+                        examples = @ExampleObject(name = "Log in example",
+                                value = "{\n" +
+                                        "    \"message\": \"User logged in successfully\",\n" +
+                                        "    \"token\": \"abcde.123455\"\n" +
+                                        "}")))
+    })
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthDTO.LoginRequest userLogin)  {
 
@@ -66,6 +85,7 @@ public class AuthController {
 
 
     }
+    @Operation(summary = "This endpoint is used for user registration.")
     @PostMapping("/register")
     public ResponseEntity<?> login(@RequestBody User registerUser) throws IllegalAccessException {
 

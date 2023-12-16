@@ -1,6 +1,8 @@
 package com.ruth.rurucraftsecommerce.user;
 
 import com.ruth.rurucraftsecommerce.response.Response;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+@Tag(name = "2. Users ",description = "Viewing and updating of users")
+
 @RestController
 @RequestMapping("/ruru-crafts")
 public class UserController {
@@ -22,6 +26,7 @@ public class UserController {
     @Autowired
     private UserServiceImpl userService;
 
+    @Operation(summary = "This endpoint is used for listing all the users, you have to be authorized to use this endpoint")
     @PreAuthorize("hasAuthority('SCOPE_LIST_USERS')")
     @GetMapping("/users")
     public ResponseEntity<?> getAllUsers(Authentication authentication){
@@ -37,6 +42,7 @@ public class UserController {
 
     }
 
+    @Operation(summary = "This endpoint is used for retrieving a user, you have to be authorized to use this endpoint")
     @PreAuthorize("hasAuthority('SCOPE_LIST_USERS')")
     @GetMapping("/user/{id}")
     public ResponseEntity<?> getUserById(@PathVariable("id") Integer id){
@@ -59,6 +65,7 @@ public class UserController {
         }
 
     }
+    @Operation(summary = "This endpoint is used for enabling or disabling a user, you have to be authorized to use this endpoint")
     @PreAuthorize("hasAuthority('SCOPE_LIST_USERS')")
     @PutMapping("/user/enable/{id}")
     public ResponseEntity<?> enableUser(@PathVariable("id") Integer id, @RequestBody UserDTO.UserEnableAccountDTO enableAccount){
@@ -80,6 +87,7 @@ public class UserController {
 
     }
 
+    @Operation(summary = "This endpoint is used for locking or unlocking  an account, you have to be authorized to use this endpoint")
     @PreAuthorize("hasAuthority('SCOPE_LIST_USERS')")
     @PutMapping("/user/unlock/{id}")
     public ResponseEntity<?> enableUser(@PathVariable("id") Integer id, @RequestBody UserDTO.UserUnlockAccountDTO unlockAccountDTO){
@@ -100,6 +108,8 @@ public class UserController {
 
 
     }
+
+    @Operation(summary = "This endpoint is used for updating user details, you have to be authorized to use this endpoint")
     @PreAuthorize("hasAuthority('SCOPE_LIST_USERS')")
     @PutMapping("/user/update/{id}")
     public ResponseEntity<?> enableUser(@PathVariable("id") Integer id, @RequestBody UserDTO.UserDetailsUpdateDTO updateDTO){
