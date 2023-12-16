@@ -52,7 +52,6 @@ Make sure you have the following installed on your machine:
       springdoc.swagger-ui.path=/swagger-ui.html
       springdoc.api-docs.path=/api-docs
       springdoc.api-docs.version=OPENAPI_3_0
-      #springdoc.swagger-ui.operationsSorter=method
       springdoc.swagger-ui.tagsSorter=alpha
       springdoc.swagger-ui.defaultModelsExpandDepth=-1
      ```
