@@ -70,5 +70,8 @@ public class AuthUser extends User  implements UserDetails{
         return true;
     }
 
-
+    @Override
+    public Integer getId() {
+        return user.getId();
+    }
 }
