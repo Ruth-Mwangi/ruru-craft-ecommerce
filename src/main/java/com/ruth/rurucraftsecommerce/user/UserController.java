@@ -46,21 +46,22 @@ public class UserController {
     }
 
     @Operation(summary = "This endpoint is used for retrieving a user, you have to be authorized to use this endpoint")
-    @PreAuthorize("hasAuthority('SCOPE_LIST_USERS')")
+    @PreAuthorize("hasAuthority('SCOPE_ADMIN')  or  @userServiceImpl.isResourceOwner(authentication,#id)")
     @GetMapping("/user/{id}")
     public ResponseEntity<?> getUserById(@PathVariable("id") Integer id){
 
+
         try{
             UserDTO.ViewUserDTO user = userService.getUserById(id);
-            if(user==null){
-                throw new UsernameNotFoundException("User not found with ID: " + id);
 
-            }
             Response response=new Response(HttpStatus.OK.value(), "Data retrieved successfully!",user);
             return ResponseEntity.ok(response);
+        }catch (NoSuchElementException e){
+            Response response=new Response(HttpStatus.BAD_REQUEST.value(), e.getMessage(),null);
+            return ResponseEntity.badRequest().body(response);
         }catch (AccessDeniedException e) {
             // Catch AccessDeniedException if not authorized
-            Response response = new Response(HttpStatus.FORBIDDEN.value(), "Access denied!", null);
+            Response response = new Response(HttpStatus.FORBIDDEN.value(), e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
         }catch (Exception e){
             Response response=new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Data not retrieved!",null);
@@ -70,18 +71,13 @@ public class UserController {
     }
 
     @Operation(summary = "This endpoint is used for updating user details, you have to be authorized to use this endpoint")
-    @PreAuthorize("hasAuthority('SCOPE_LIST_USERS')")
-//    @PostAuthorize("returnObject.body.data.username == authentication.name")
+    @PreAuthorize("hasAuthority('SCOPE_CUSTOMER')&& @userServiceImpl.isResourceOwner(authentication,#id)")
     @PutMapping("/user/update/{id}")
-    public ResponseEntity<?> updateUser(@PathVariable("id") Integer id, @RequestBody UserDTO.UserDetailsUpdateDTO updateDTO){
+    public ResponseEntity<?> updateUser(@PathVariable("id") Integer id, @RequestBody UserDTO.UserDetailsUpdateDTO updateDTO,Authentication authentication){
 
         try {
             UserDTO.ViewUserDTO userRetrieved = userService.getUserById(id);
 
-            // Check if the user making the request is the same as the one being updated
-//            if (!userRetrieved.getUsername().equals(SecurityContextHolder.getContext().getAuthentication().getName())) {
-//                throw new AccessDeniedException("Access is denied");
-//            }
             UserDTO.ViewUserDTO user=userService.updateUserDetails(userRetrieved.getId(), updateDTO);
             Response response=new Response(HttpStatus.OK.value(), User.class.getSimpleName()+" updated successfully!",user);
             return ResponseEntity.ok(response);
@@ -89,7 +85,39 @@ public class UserController {
             // Handle the case where the user with the given ID is not found
             Response response=new Response(HttpStatus.NOT_FOUND.value(), User.class.getSimpleName()+" not found with ID:"+id,null);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-        } catch (Exception e) {
+        } catch (AccessDeniedException e) {
+            // Catch AccessDeniedException if not authorized
+            Response response = new Response(HttpStatus.FORBIDDEN.value(), e.getMessage(), null);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+        }catch (Exception e) {
+            // Handle other exceptions
+            Response response=new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Internal server error",null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+
+
+    }
+
+    @Operation(summary = "This endpoint is used for deleting a user, you have to be authorized to use this endpoint")
+    @PreAuthorize("@userServiceImpl.isResourceOwner(authentication,#id)")
+    @DeleteMapping("/user/delete/{id}")
+    public ResponseEntity<?> deleteUser(@PathVariable("id") Integer id,Authentication authentication){
+
+        try {
+            UserDTO.ViewUserDTO userRetrieved = userService.getUserById(id);
+            boolean deleted=userService.deleteUser(userRetrieved.getId());
+            System.out.println(deleted);
+            Response response=new Response(HttpStatus.OK.value(), User.class.getSimpleName()+" deleted successfully!",null);
+            return ResponseEntity.ok(response);
+        } catch (NoSuchElementException e) {
+            // Handle the case where the user with the given ID is not found
+            Response response=new Response(HttpStatus.NOT_FOUND.value(), User.class.getSimpleName()+" not found with ID:"+id,null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        } catch (AccessDeniedException e) {
+            // Catch AccessDeniedException if not authorized
+            Response response = new Response(HttpStatus.FORBIDDEN.value(), e.getMessage(), null);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+        }catch (Exception e) {
             // Handle other exceptions
             Response response=new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Internal server error",null);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
