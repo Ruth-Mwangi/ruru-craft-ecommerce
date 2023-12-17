@@ -2,6 +2,7 @@ package com.ruth.rurucraftsecommerce.authentication;
 
 import com.ruth.rurucraftsecommerce.response.Response;
 import com.ruth.rurucraftsecommerce.user.User;
+import com.ruth.rurucraftsecommerce.user.UserDTO;
 import com.ruth.rurucraftsecommerce.user.UserRepository;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
@@ -94,8 +95,8 @@ public class AuthController {
             registerUser.setPassword(passwordEncoder.encode(registerUser.getPassword()));
 
             User createdUser=userRepository.save(registerUser);
-            createdUser.setPassword(null);
-            Response response = new Response(HttpStatus.OK.value(),"User registered successfully, proceed to log in.",createdUser);
+
+            Response response = new Response(HttpStatus.OK.value(),"User registered successfully, proceed to log in.", new UserDTO.ViewUserDTO(createdUser));
 
 
             return ResponseEntity.ok(response);

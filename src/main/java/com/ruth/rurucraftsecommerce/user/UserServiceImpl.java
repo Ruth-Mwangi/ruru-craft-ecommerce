@@ -28,28 +28,12 @@ public class UserServiceImpl implements UserService {
         return users.stream().map(UserMapper::mapToUserDto).toList();
     }
 
-    @Override
-    public UserDTO.ViewUserDTO enableOrDisableUser(int id,UserDTO.UserEnableAccountDTO enableAccountDTO) {
-        User retrivedUser=userRepository.findById(id).orElseThrow(()->new NoSuchElementException("User not found with ID: " + id));
-        retrivedUser.setEnabled(enableAccountDTO.isEnabled());
-        User updatedUser=userRepository.save(retrivedUser);
 
-        return UserMapper.mapToUserDto(updatedUser);
-    }
-
-    @Override
-    public UserDTO.ViewUserDTO unlockOrLockAccount(int id,UserDTO.UserUnlockAccountDTO unlockAccountDTO) {
-        User retrivedUser=userRepository.findById(id).orElseThrow(()->new NoSuchElementException("User not found with ID: " + id));
-        retrivedUser.setAccountNonLocked(unlockAccountDTO.isAccountNonLocked());
-        User updatedUser=userRepository.save(retrivedUser);
-
-        return UserMapper.mapToUserDto(updatedUser);
-    }
 
     @Override
     public UserDTO.ViewUserDTO updateUserDetails(int id,UserDTO.UserDetailsUpdateDTO userDetailsUpdateDTO) {
         User retrivedUser=userRepository.findById(id).orElseThrow(()->new NoSuchElementException("User not found with ID: " + id));
-        retrivedUser.setUsername(userDetailsUpdateDTO.getUsername());
+        retrivedUser.setEmail(userDetailsUpdateDTO.getEmail());
         retrivedUser.setFirstName(userDetailsUpdateDTO.getFirstName());
         retrivedUser.setLastName(userDetailsUpdateDTO.getLastName());
         retrivedUser.setPhoneNumber(userDetailsUpdateDTO.getPhoneNumber());

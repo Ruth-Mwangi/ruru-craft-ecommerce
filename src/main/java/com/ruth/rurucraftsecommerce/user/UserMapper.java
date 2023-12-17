@@ -12,9 +12,7 @@ public class UserMapper {
     public static User mapToUser(UserDTO.ViewUserDTO viewUserDTO){
         return new User(
                 viewUserDTO.getId(),
-                viewUserDTO.getUsername(),
-                viewUserDTO.isAccountNonLocked(),
-                viewUserDTO.isEnabled(),
+                viewUserDTO.getEmail(),
                 viewUserDTO.getFirstName(),
                 viewUserDTO.getLastName(),
                 viewUserDTO.getPhoneNumber()
