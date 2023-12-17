@@ -31,7 +31,7 @@ public class UserDTO {
     public static class UserDetailsUpdateDTO{
 
         private Integer id;
-        private String username;
+        private String email;
         private String firstName;
         private String lastName;
 
@@ -45,12 +45,12 @@ public class UserDTO {
             this.id = id;
         }
 
-        public String getUsername() {
-            return username;
+        public String getEmail() {
+            return email;
         }
 
-        public void setUsername(String username) {
-            this.username = username;
+        public void setEmail(String email) {
+            this.email = email;
         }
 
         public String getFirstName() {
@@ -122,10 +122,7 @@ public class UserDTO {
 
     public static class ViewUserDTO{
         private Integer id;
-        private String username;
-        private boolean accountNonLocked;
-
-        private boolean enabled;
+        private String email;
 
         private String firstName;
 
@@ -135,9 +132,7 @@ public class UserDTO {
 
         public ViewUserDTO(User user) {
             this.id = user.getId();
-            this.username = user.getUsername();
-            this.accountNonLocked = user.isAccountNonLocked();
-            this.enabled = user.isEnabled();
+            this.email = user.getEmail();
             this.firstName = user.getFirstName();
             this.lastName = user.getLastName();
             this.phoneNumber = user.getPhoneNumber();
@@ -151,28 +146,12 @@ public class UserDTO {
             this.id = id;
         }
 
-        public String getUsername() {
-            return username;
+        public String getEmail() {
+            return email;
         }
 
-        public void setUsername(String username) {
-            this.username = username;
-        }
-
-        public boolean isAccountNonLocked() {
-            return accountNonLocked;
-        }
-
-        public void setAccountNonLocked(boolean accountNonLocked) {
-            this.accountNonLocked = accountNonLocked;
-        }
-
-        public boolean isEnabled() {
-            return enabled;
-        }
-
-        public void setEnabled(boolean enabled) {
-            this.enabled = enabled;
+        public void setEmail(String email) {
+            this.email = email;
         }
 
         public String getFirstName() {

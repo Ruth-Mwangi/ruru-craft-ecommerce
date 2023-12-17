@@ -1,14 +1,14 @@
 package com.ruth.rurucraftsecommerce.permissions;
 
+import com.ruth.rurucraftsecommerce.common.BaseEntity;
 import com.ruth.rurucraftsecommerce.user.User;
 import jakarta.persistence.*;
 
-@Entity
-@Table(name = "user_permissions")
-public class UserPermission {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+import java.util.prefs.BackingStoreException;
+
+//@Entity
+//@Table(name = "user_permissions")
+public class UserPermission  extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -18,13 +18,6 @@ public class UserPermission {
     @JoinColumn(name = "permission_id", nullable = false)
     private Permission permission;
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public User getUser() {
         return user;

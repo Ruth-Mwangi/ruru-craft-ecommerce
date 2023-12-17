@@ -2,29 +2,25 @@ package com.ruth.rurucraftsecommerce.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.ruth.rurucraftsecommerce.common.BaseEntity;
+import com.ruth.rurucraftsecommerce.group.UserGroup;
 import com.ruth.rurucraftsecommerce.permissions.UserPermission;
 import jakarta.persistence.*;
 
 import java.util.Set;
+import java.util.prefs.BackingStoreException;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Entity
 @Table(name = "users")
-public class User {
+public class User extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+
     @Column(unique = true,name = "email",nullable = false)
-    private String username;
+    private String email;
 
     @Column(nullable = false)
     private String password;
-    @Column(name = "account_non_locked", nullable = false)
-    private boolean accountNonLocked;
-
-    @Column(name = "enabled", nullable = false)
-    private boolean enabled;
 
     @Column(nullable = false)
     private String firstName;
@@ -32,40 +28,31 @@ public class User {
     @Column(nullable = false)
     private String lastName;
 
-    @Column(nullable = false)
+    @Column(nullable = false,unique = true)
     private String phoneNumber;
 
     @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    private Set<UserPermission> userPermissions;
+    private Set<UserGroup> userGroups;
 
     public User() {
     }
 
-    public User(Integer id, String username, boolean accountNonLocked, boolean enabled, String firstName, String lastName, String phoneNumber) {
-        this.id = id;
-        this.username = username;
-        this.accountNonLocked = accountNonLocked;
-        this.enabled = enabled;
+    public User(Integer id, String email, String firstName, String lastName, String phoneNumber) {
+        this.setId(id);
+        this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
         this.phoneNumber = phoneNumber;
     }
 
-    public Integer getId() {
-        return id;
+
+    public String getEmail() {
+        return email;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getPassword() {
@@ -74,22 +61,6 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public boolean isAccountNonLocked() {
-        return accountNonLocked;
-    }
-
-    public void setAccountNonLocked(boolean accountNonLocked) {
-        this.accountNonLocked = accountNonLocked;
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
     }
 
     public String getFirstName() {
@@ -108,12 +79,12 @@ public class User {
         this.lastName = lastName;
     }
 
-    public Set<UserPermission> getUserPermissions() {
-        return userPermissions;
+    public Set<UserGroup> getUserGroups() {
+        return userGroups;
     }
 
-    public void setUserPermissions(Set<UserPermission> userPermissions) {
-        this.userPermissions = userPermissions;
+    public void setUserGroups(Set<UserGroup> userGroups) {
+        this.userGroups = userGroups;
     }
 
     public String getPhoneNumber() {
@@ -127,8 +98,8 @@ public class User {
     @Override
     public String toString() {
         return "User{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
+                "id=" + getId() +
+                ", username='" + email + '\'' +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 '}';
