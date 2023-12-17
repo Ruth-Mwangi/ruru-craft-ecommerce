@@ -7,9 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,9 +29,10 @@ public class UserController {
     private UserServiceImpl userService;
 
     @Operation(summary = "This endpoint is used for listing all the users, you have to be authorized to use this endpoint")
-    @PreAuthorize("hasAuthority('SCOPE_LIST_USERS')")
+    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
     @GetMapping("/users")
     public ResponseEntity<?> getAllUsers(Authentication authentication){
+        System.out.println(authentication.getAuthorities().toString());
 
         try{
             List<UserDTO.ViewUserDTO> users= userService.getAllUsers();
@@ -65,57 +68,21 @@ public class UserController {
         }
 
     }
-    @Operation(summary = "This endpoint is used for enabling or disabling a user, you have to be authorized to use this endpoint")
-    @PreAuthorize("hasAuthority('SCOPE_LIST_USERS')")
-    @PutMapping("/user/enable/{id}")
-    public ResponseEntity<?> enableUser(@PathVariable("id") Integer id, @RequestBody UserDTO.UserEnableAccountDTO enableAccount){
-
-        try {
-            UserDTO.ViewUserDTO user=userService.enableOrDisableUser(id, enableAccount);
-            Response response=new Response(HttpStatus.OK.value(), User.class.getSimpleName()+" updated successfully!",user);
-            return ResponseEntity.ok(response);
-        } catch (NoSuchElementException e) {
-            // Handle the case where the user with the given ID is not found
-            Response response=new Response(HttpStatus.NOT_FOUND.value(), User.class.getSimpleName()+" not found with ID:"+id,null);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-        } catch (Exception e) {
-            // Handle other exceptions
-            Response response=new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Internal server error",null);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-        }
-
-
-    }
-
-    @Operation(summary = "This endpoint is used for locking or unlocking  an account, you have to be authorized to use this endpoint")
-    @PreAuthorize("hasAuthority('SCOPE_LIST_USERS')")
-    @PutMapping("/user/unlock/{id}")
-    public ResponseEntity<?> enableUser(@PathVariable("id") Integer id, @RequestBody UserDTO.UserUnlockAccountDTO unlockAccountDTO){
-
-        try {
-            UserDTO.ViewUserDTO user=userService.unlockOrLockAccount(id, unlockAccountDTO);
-            Response response=new Response(HttpStatus.OK.value(), User.class.getSimpleName()+" updated successfully!",user);
-            return ResponseEntity.ok(response);
-        } catch (NoSuchElementException e) {
-            // Handle the case where the user with the given ID is not found
-            Response response=new Response(HttpStatus.NOT_FOUND.value(), User.class.getSimpleName()+" not found with ID:"+id,null);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-        } catch (Exception e) {
-            // Handle other exceptions
-            Response response=new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Internal server error",null);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-        }
-
-
-    }
 
     @Operation(summary = "This endpoint is used for updating user details, you have to be authorized to use this endpoint")
     @PreAuthorize("hasAuthority('SCOPE_LIST_USERS')")
+//    @PostAuthorize("returnObject.body.data.username == authentication.name")
     @PutMapping("/user/update/{id}")
-    public ResponseEntity<?> enableUser(@PathVariable("id") Integer id, @RequestBody UserDTO.UserDetailsUpdateDTO updateDTO){
+    public ResponseEntity<?> updateUser(@PathVariable("id") Integer id, @RequestBody UserDTO.UserDetailsUpdateDTO updateDTO){
 
         try {
-            UserDTO.ViewUserDTO user=userService.updateUserDetails(id, updateDTO);
+            UserDTO.ViewUserDTO userRetrieved = userService.getUserById(id);
+
+            // Check if the user making the request is the same as the one being updated
+//            if (!userRetrieved.getUsername().equals(SecurityContextHolder.getContext().getAuthentication().getName())) {
+//                throw new AccessDeniedException("Access is denied");
+//            }
+            UserDTO.ViewUserDTO user=userService.updateUserDetails(userRetrieved.getId(), updateDTO);
             Response response=new Response(HttpStatus.OK.value(), User.class.getSimpleName()+" updated successfully!",user);
             return ResponseEntity.ok(response);
         } catch (NoSuchElementException e) {

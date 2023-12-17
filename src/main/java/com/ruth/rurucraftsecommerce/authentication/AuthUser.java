@@ -1,5 +1,6 @@
 package com.ruth.rurucraftsecommerce.authentication;
 
+import com.ruth.rurucraftsecommerce.permissions.Permission;
 import com.ruth.rurucraftsecommerce.user.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -22,7 +23,7 @@ public class AuthUser extends User  implements UserDetails{
 
     @Override
     public String getUsername() {
-        return user.getUsername();
+        return user.getEmail();
     }
 
     @Override
@@ -32,19 +33,27 @@ public class AuthUser extends User  implements UserDetails{
 
     @Override
     public boolean isAccountNonLocked() {
-        return user.isAccountNonLocked();
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return user.isEnabled();
+        return true;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        Set<String> authorities = user.getUserPermissions().stream()
-                .map(userPermission -> userPermission.getPermission().getName())
+        Set<String> roles = user.getUserGroups().stream()
+                .map(userGroup -> userGroup.getGroup().getName())
                 .collect(Collectors.toSet());
+
+        Set<String> authorities = user.getUserGroups().stream()
+                .flatMap(userGroup -> userGroup.getGroup().getGroupPermissions().stream())
+                .map(permission->permission.getPermission().getName())
+                .collect(Collectors.toSet());
+
+        authorities.addAll(roles);
+
 
         return authorities.stream()
                 .map(SimpleGrantedAuthority::new)
@@ -60,4 +69,6 @@ public class AuthUser extends User  implements UserDetails{
     public boolean isCredentialsNonExpired() {
         return true;
     }
+
+
 }

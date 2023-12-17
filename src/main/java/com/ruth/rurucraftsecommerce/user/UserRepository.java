@@ -13,10 +13,12 @@ public interface UserRepository extends JpaRepository<User,Integer> {
 
 
     @Query("SELECT DISTINCT user FROM User user " +
-            "LEFT JOIN FETCH user.userPermissions AS userPermissions " +
-            "LEFT JOIN FETCH userPermissions.permission AS permission " +
-            "WHERE user.username = :username")
-    Optional<User> findByUsername(@Param("username") String username);
+            "LEFT JOIN FETCH user.userGroups AS userGroups " +
+            "LEFT JOIN FETCH userGroups.group AS group " +
+            "LEFT JOIN FETCH group.groupPermissions AS groupPermissions " +
+            "LEFT JOIN FETCH groupPermissions.permission AS permission " +
+            "WHERE user.email = :email")
+    Optional<User> findByEmail(@Param("email") String email);
 
 
 }
