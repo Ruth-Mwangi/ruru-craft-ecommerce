@@ -138,6 +138,9 @@ public class UserDTO {
             this.phoneNumber = user.getPhoneNumber();
         }
 
+        public ViewUserDTO() {
+        }
+
         public Integer getId() {
             return id;
         }

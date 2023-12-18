@@ -13,7 +13,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.oauth2.common.exceptions.UnauthorizedUserException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.Collection;
 import java.util.List;
@@ -38,8 +40,11 @@ public class UserController {
             List<UserDTO.ViewUserDTO> users= userService.getAllUsers();
             Response response=new Response(HttpStatus.OK.value(), "Data retrieved successfully!",users);
             return ResponseEntity.ok(response);
+        }catch (AccessDeniedException e){
+            Response response=new Response(HttpStatus.UNAUTHORIZED.value(), "Data not retrieved!",null);
+            return ResponseEntity.badRequest().body(response);
         }catch (Exception e){
-            Response response=new Response(HttpStatus.OK.value(), "Data not retrieved!",null);
+            Response response=new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Data not retrieved!",null);
             return ResponseEntity.badRequest().body(response);
         }
 
@@ -87,8 +92,8 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         } catch (AccessDeniedException e) {
             // Catch AccessDeniedException if not authorized
-            Response response = new Response(HttpStatus.FORBIDDEN.value(), e.getMessage(), null);
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+            Response response = new Response(HttpStatus.UNAUTHORIZED.value(), e.getMessage(), null);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }catch (Exception e) {
             // Handle other exceptions
             Response response=new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Internal server error",null);
