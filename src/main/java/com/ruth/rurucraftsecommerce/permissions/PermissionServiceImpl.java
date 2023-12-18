@@ -36,6 +36,7 @@ public class PermissionServiceImpl implements PermissionService{
 
     @Override
     public List<Permission> getAllPermissions() {
+
         return permissionRepository.findAllByDeletedAtIsNull();
     }
 
