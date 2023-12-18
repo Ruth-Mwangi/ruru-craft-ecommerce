@@ -1,5 +1,4 @@
-package com.ruth.rurucraftsecommerce.permissions;
-
+package com.ruth.rurucraftsecommerce.group;
 
 import com.ruth.rurucraftsecommerce.response.Response;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,24 +13,22 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Tag(name = "3. Permissions ",description = "Interact with permissions in a system. You can create new ones, modify existing ones, list, or remove ones that are no longer necessary.")
+@Tag(name = "4. Groups ",description = "Interact with groups in a system. You can create new ones, modify existing ones, list, or remove ones that are no longer necessary.")
 
 @RestController
 @RequestMapping("/ruru-crafts")
-public class PermissionController {
-
+public class GroupController {
     @Autowired
-    private PermissionServiceImpl permissionService;
+    private GroupServiceImpl groupService;
 
-
-    @Operation(summary = "This endpoint creates a permissions and requires user to be authenticated")
+    @Operation(summary = "This endpoint creates a groups and requires user to be authenticated")
     @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
-    @PostMapping("/permission/create")
-    public ResponseEntity<?> createPermission(@RequestBody Permission permission){
+    @PostMapping("/group/create")
+    public ResponseEntity<?> createGroup(@RequestBody Group group){
 
         try{
-            Permission createdPermission= permissionService.createPermission(permission);
-            Response response=new Response(HttpStatus.OK.value(), "Data created successfully!",createdPermission);
+            Group createdGroup= groupService.createGroup(group);
+            Response response=new Response(HttpStatus.OK.value(), "Data created successfully!",createdGroup);
             return ResponseEntity.ok(response);
         }catch (AccessDeniedException e){
             Response response=new Response(HttpStatus.UNAUTHORIZED.value(), "Data not retrieved!",null);
@@ -43,14 +40,14 @@ public class PermissionController {
 
     }
 
-    @Operation(summary = "This endpoint retrieves all permissions and requires user to be authenticated")
+    @Operation(summary = "This endpoint retrieves all groups and requires user to be authenticated")
     @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
-    @GetMapping("/permissions")
-    public ResponseEntity<?> getAllPermissions(Authentication authentication){
+    @GetMapping("/groups")
+    public ResponseEntity<?> getAllGroups(Authentication authentication){
 
         try{
-            List<Permission> permissions= permissionService.getAllPermissions();
-            Response response=new Response(HttpStatus.OK.value(), "Data retrieved successfully!",permissions);
+            List<Group> groups= groupService.getAllGroups();
+            Response response=new Response(HttpStatus.OK.value(), "Data retrieved successfully!",groups);
             return ResponseEntity.ok(response);
         }catch (AccessDeniedException e){
             Response response=new Response(HttpStatus.UNAUTHORIZED.value(), "Data not retrieved!",null);
@@ -61,34 +58,14 @@ public class PermissionController {
         }
 
     }
-    @Operation(summary = "This endpoint retrieves  a permission by the id and requires user to be authenticated")
+    @Operation(summary = "This endpoint retrieves  a group by the id and requires user to be authenticated")
     @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
-    @GetMapping("/permission/{id}")
-    public ResponseEntity<?> getPermissionsById(@PathVariable("id") Integer id){
+    @GetMapping("/group/{id}")
+    public ResponseEntity<?> getGroupsById(@PathVariable("id") Integer id){
 
         try{
-            Permission permission= permissionService.getPermissionById(id);
-            Response response=new Response(HttpStatus.OK.value(), "Data retrieved successfully!",permission);
-            return ResponseEntity.ok(response);
-        }catch (AccessDeniedException e){
-            Response response=new Response(HttpStatus.UNAUTHORIZED.value(), "Data not retrieved!",null);
-            return ResponseEntity.badRequest().body(response);
-        }catch (Exception e){
-            Response response=new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Data not retrieved!",null);
-            return ResponseEntity.badRequest().body(response);
-        }
-
-    }
-
-    @Operation(summary = "This endpoint updates a permission and requires user to be authenticated")
-    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
-    @PutMapping("/permission/update/{id}")
-    public ResponseEntity<?> updatePermission(@PathVariable("id") Integer id,@RequestBody Permission permission){
-
-        try{
-            Permission retrievedPermission= permissionService.getPermissionById(id);
-            Permission createdPermission= permissionService.updatePermission(id,permission);
-            Response response=new Response(HttpStatus.OK.value(), "Data updated successfully!",createdPermission);
+            Group group= groupService.getGroupById(id);
+            Response response=new Response(HttpStatus.OK.value(), "Data retrieved successfully!",group);
             return ResponseEntity.ok(response);
         }catch (AccessDeniedException e){
             Response response=new Response(HttpStatus.UNAUTHORIZED.value(), "Data not retrieved!",null);
@@ -100,14 +77,34 @@ public class PermissionController {
 
     }
 
-    @Operation(summary = "This endpoint delete a permission and requires user to be authenticated")
+    @Operation(summary = "This endpoint updates a group and requires user to be authenticated")
     @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
-    @DeleteMapping("/permission/delete/{id}")
-    public ResponseEntity<?> deletePermission(@PathVariable("id") Integer id){
+    @PutMapping("/group/update/{id}")
+    public ResponseEntity<?> updateGroup(@PathVariable("id") Integer id,@RequestBody Group group){
 
         try{
-            Permission retrievedPermission= permissionService.getPermissionById(id);
-            boolean createdPermission= permissionService.deletePermission(id);
+            Group retrievedGroup= groupService.getGroupById(id);
+            Group createdGroup= groupService.updateGroup(id,group);
+            Response response=new Response(HttpStatus.OK.value(), "Data updated successfully!",createdGroup);
+            return ResponseEntity.ok(response);
+        }catch (AccessDeniedException e){
+            Response response=new Response(HttpStatus.UNAUTHORIZED.value(), "Data not retrieved!",null);
+            return ResponseEntity.badRequest().body(response);
+        }catch (Exception e){
+            Response response=new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Data not retrieved!",null);
+            return ResponseEntity.badRequest().body(response);
+        }
+
+    }
+
+    @Operation(summary = "This endpoint delete a group and requires user to be authenticated")
+    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
+    @DeleteMapping("/group/delete/{id}")
+    public ResponseEntity<?> deleteGroup(@PathVariable("id") Integer id){
+
+        try{
+            Group retrievedGroup= groupService.getGroupById(id);
+            boolean createdGroup= groupService.deleteGroup(id);
             Response response=new Response(HttpStatus.OK.value(), "Data deleted successfully!",null);
             return ResponseEntity.ok(response);
         }catch (AccessDeniedException e){
@@ -120,3 +117,4 @@ public class PermissionController {
 
     }
 }
+

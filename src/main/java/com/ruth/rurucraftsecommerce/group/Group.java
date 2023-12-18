@@ -6,8 +6,10 @@ import com.ruth.rurucraftsecommerce.common.BaseEntity;
 import com.ruth.rurucraftsecommerce.permissions.UserPermission;
 import jakarta.persistence.*;
 
+import java.util.Date;
 import java.util.Set;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 @Entity
 @Table(name = "`groups`")
 public class Group  extends BaseEntity {
@@ -16,8 +18,24 @@ public class Group  extends BaseEntity {
     private String name;
 
 
+    @JsonIgnore
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private Set<GroupPermission> groupPermissions;
+
+    public Group(Integer id, String name) {
+        this.setId(id);
+        this.name=name;
+    }
+
+    public Group(Integer id, String name,Date deletedAt) {
+        this.setId(id);
+        this.setDeletedAt(deletedAt);
+        this.name=name;
+    }
+
+    public Group() {
+
+    }
 
 
     public String getName() {
