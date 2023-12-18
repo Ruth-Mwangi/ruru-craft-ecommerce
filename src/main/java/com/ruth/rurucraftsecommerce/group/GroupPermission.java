@@ -19,6 +19,14 @@ public class GroupPermission extends BaseEntity {
     @JoinColumn(name = "permission_id", nullable = false)
     private Permission permission;
 
+    public GroupPermission(Group group, Permission permission) {
+        this.group = group;
+        this.permission = permission;
+    }
+
+    public GroupPermission() {
+    }
+
     public Group getGroup() {
         return group;
     }

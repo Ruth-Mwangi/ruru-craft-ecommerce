@@ -1,5 +1,7 @@
 package com.ruth.rurucraftsecommerce.group;
 
+import com.ruth.rurucraftsecommerce.permissions.Permission;
+import com.ruth.rurucraftsecommerce.permissions.PermissionServiceImpl;
 import com.ruth.rurucraftsecommerce.response.Response;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -12,6 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Tag(name = "4. Groups ",description = "Interact with groups in a system. You can create new ones, modify existing ones, list, or remove ones that are no longer necessary.")
 
@@ -20,6 +23,9 @@ import java.util.List;
 public class GroupController {
     @Autowired
     private GroupServiceImpl groupService;
+
+    @Autowired
+    private PermissionServiceImpl permissionService;
 
     @Operation(summary = "This endpoint creates a groups and requires user to be authenticated")
     @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
@@ -116,5 +122,79 @@ public class GroupController {
         }
 
     }
+
+    @Operation(summary = "This endpoint creates a relationship between a group and permission and requires user to be authenticated")
+    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
+    @PostMapping("/group/{groupId}/create/permission")
+    public ResponseEntity<?> createGroupPermission(@PathVariable("groupId") Integer groupId, @RequestBody List<Integer> permissionIds) {
+        Group retrievedGroup= groupService.getGroupById(groupId);
+        try {
+            boolean created=groupService.createGroupWithPermissions(groupId,permissionIds);
+            Response response=new Response(HttpStatus.OK.value(), "Data created successfully!",null);
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            Response response=new Response(HttpStatus.BAD_REQUEST.value(), "Combination already exists!",null);
+            return ResponseEntity.badRequest().body(response);
+        }catch (AccessDeniedException e){
+            Response response=new Response(HttpStatus.UNAUTHORIZED.value(), "Data not retrieved!",null);
+            return ResponseEntity.badRequest().body(response);
+        }catch (Exception e){
+            Response response=new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Data not retrieved!",null);
+            return ResponseEntity.badRequest().body(response);
+        }
+
+
+    }
+
+    @Operation(summary = "This endpoint deletes a relationship between a group and permission and requires user to be authenticated")
+    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
+    @DeleteMapping("/group/{groupId}/delete/permission/{permissionId}")
+    public ResponseEntity<?> deleteGroupPermission(@PathVariable("groupId") Integer groupId,@PathVariable("permissionId") Integer permissionId ) {
+        Group retrievedGroup= groupService.getGroupById(groupId);
+        Permission retrievedPermission= permissionService.getPermissionById(permissionId);
+        try {
+            boolean deleted=groupService.deletGroupPermissions(groupId,permissionId);
+            Response response=new Response(HttpStatus.OK.value(), "Data deleted successfully!",null);
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            Response response=new Response(HttpStatus.BAD_REQUEST.value(), "Combination already exists!",null);
+            return ResponseEntity.badRequest().body(response);
+        }catch (NoSuchElementException e) {
+            Response response=new Response(HttpStatus.BAD_REQUEST.value(), e.getMessage(),null);
+            return ResponseEntity.badRequest().body(response);
+        } catch (AccessDeniedException e){
+            Response response=new Response(HttpStatus.UNAUTHORIZED.value(), "Data not retrieved!",null);
+            return ResponseEntity.badRequest().body(response);
+        }catch (Exception e){
+            Response response=new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Data not retrieved!",null);
+            return ResponseEntity.badRequest().body(response);
+        }
+
+
+    }
+    @Operation(summary = "This endpoint retrieves a relationship between a group and permission and requires user to be authenticated")
+    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
+    @GetMapping("/group/{groupId}/permissions")
+    public ResponseEntity<?> getPermissionsByGroupId(@PathVariable Integer groupId) {
+        Group retrievedGroup= groupService.getGroupById(groupId);
+        try {
+            List<Permission> permissions = groupService.getPermissionsByGroupId(groupId);
+            Response response=new Response(HttpStatus.OK.value(), "Data retrieved successfully!",permissions);
+            return ResponseEntity.ok(response);
+        }catch (NoSuchElementException e) {
+            Response response=new Response(HttpStatus.BAD_REQUEST.value(), e.getMessage(),null);
+            return ResponseEntity.badRequest().body(response);
+        } catch (AccessDeniedException e){
+            Response response=new Response(HttpStatus.UNAUTHORIZED.value(), "Data not retrieved!",null);
+            return ResponseEntity.badRequest().body(response);
+        }catch (Exception e){
+            Response response=new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Data not retrieved!",null);
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
+
+
 }
+
 

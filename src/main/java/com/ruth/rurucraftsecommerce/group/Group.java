@@ -3,10 +3,12 @@ package com.ruth.rurucraftsecommerce.group;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.ruth.rurucraftsecommerce.common.BaseEntity;
+import com.ruth.rurucraftsecommerce.permissions.Permission;
 import com.ruth.rurucraftsecommerce.permissions.UserPermission;
 import jakarta.persistence.*;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -52,5 +54,8 @@ public class Group  extends BaseEntity {
 
     public void setGroupPermissions(Set<GroupPermission> groupPermissions) {
         this.groupPermissions = groupPermissions;
+    }
+
+    public void setPermissions(List<Permission> permissions) {
     }
 }
