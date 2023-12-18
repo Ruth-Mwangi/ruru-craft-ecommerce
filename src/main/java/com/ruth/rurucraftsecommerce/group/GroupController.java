@@ -175,7 +175,7 @@ public class GroupController {
     @Operation(summary = "This endpoint retrieves a relationship between a group and permission and requires user to be authenticated")
     @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
     @GetMapping("/group/{groupId}/permissions")
-    public ResponseEntity<?> getPermissionsByGroupId(@PathVariable Integer groupId) {
+    public ResponseEntity<?> getGroupPermissionsByGroupId(@PathVariable Integer groupId) {
         Group retrievedGroup= groupService.getGroupById(groupId);
         try {
             List<Permission> permissions = groupService.getPermissionsByGroupId(groupId);

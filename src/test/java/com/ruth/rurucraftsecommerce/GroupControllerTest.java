@@ -1,10 +1,8 @@
 package com.ruth.rurucraftsecommerce;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ruth.rurucraftsecommerce.group.Group;
-import com.ruth.rurucraftsecommerce.group.GroupController;
-import com.ruth.rurucraftsecommerce.group.GroupRepository;
-import com.ruth.rurucraftsecommerce.group.GroupServiceImpl;
+import com.ruth.rurucraftsecommerce.group.*;
+import com.ruth.rurucraftsecommerce.permissions.Permission;
 import com.ruth.rurucraftsecommerce.permissions.PermissionController;
 import com.ruth.rurucraftsecommerce.permissions.PermissionRepository;
 import com.ruth.rurucraftsecommerce.permissions.PermissionServiceImpl;
@@ -41,9 +39,17 @@ public class GroupControllerTest {
     MockMvc mockMvc;
     @MockBean
     GroupServiceImpl groupService;
+    @MockBean
+    PermissionServiceImpl permissionService;
 
     @MockBean
     GroupRepository groupRepository;
+
+    @MockBean
+    PermissionRepository permissionRepository;
+
+    @MockBean
+    GroupPermissionRepository groupPermissionRepository;
 
     @MockBean
     UserServiceImpl userService;
@@ -288,6 +294,140 @@ public class GroupControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print());
 
+
+    }
+
+    @Test
+    @WithMockUser(username = "customer@test.com",authorities = "SCOPE_CUSTOMER",password = "password")
+    void givenUserIsNotGrantedWithScopeAdmin_whenCreateGroupPermissionMethod_thenUnauthorized() throws Exception {
+        Integer groupId=1;
+        List<Integer> permissionIds=new ArrayList<>();
+        permissionIds.add(1);
+        permissionIds.add(2);
+        permissionIds.add(3);
+        permissionIds.add(4);
+        Group currentGroup= new Group(1,"CREATE_GROUP");
+
+        when(groupService.getGroupById(groupId)).thenReturn(currentGroup);
+        when(groupService.createGroupWithPermissions(groupId,permissionIds)).thenReturn(true);
+
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        mockMvc.perform(MockMvcRequestBuilders
+                        .post("/ruru-crafts/group/{groupId}/create/permission", groupId).
+                        contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(permissionIds)))
+                .andExpect(status().isUnauthorized())
+                .andDo(print());
+
+
+    }
+
+    @Test
+    @WithMockUser(username = "admin@test.com",authorities = "SCOPE_ADMIN")
+    void givenUserIsGrantedWithScopeAdmin_whenCreateGroupPermissionMethod_thenOk() throws Exception {
+        Integer groupId=1;
+        List<Integer> permissionIds=new ArrayList<>();
+        permissionIds.add(1);
+        permissionIds.add(2);
+        permissionIds.add(3);
+        permissionIds.add(4);
+        Group currentGroup= new Group(1,"CREATE_GROUP");
+
+        when(groupService.getGroupById(groupId)).thenReturn(currentGroup);
+        when(groupService.createGroupWithPermissions(groupId,permissionIds)).thenReturn(true);
+
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        mockMvc.perform(MockMvcRequestBuilders
+                        .post("/ruru-crafts/group/{groupId}/create/permission", groupId).
+                        contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(permissionIds)))
+                .andExpect(status().isOk())
+                .andDo(print());
+
+
+    }
+
+    @Test
+    @WithMockUser(username = "customer@test.com",authorities = "SCOPE_CUSTOMER",password = "password")
+    void givenUserIsNotGrantedWithScopeAdmin_whenDeleteGroupPermissionMethod_thenUnauthorized() throws Exception {
+        Integer groupId=1;
+        Integer permissionId=1;
+        Permission currentPermission=new Permission(1,"LIST_USERS");
+        Group currentGroup= new Group(1,"CREATE_GROUP");
+
+        when(groupService.getGroupById(groupId)).thenReturn(currentGroup);
+        when(permissionService.getPermissionById(permissionId)).thenReturn(currentPermission);
+        when(groupService.deletGroupPermissions(groupId,permissionId)).thenReturn(true);
+
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .delete("/ruru-crafts/group/{groupId}/delete/permission/{permissionId}",groupId,permissionId))
+                .andExpect(status().isUnauthorized())
+                .andDo(print());
+
+
+    }
+
+    @Test
+    @WithMockUser(username = "admin@test.com",authorities = "SCOPE_ADMIN")
+    void givenUserIsGrantedWithScopeAdmin_whenDeleteGroupPermissionMethod_thenOk() throws Exception {
+        Integer groupId=1;
+        Integer permissionId=1;
+        Permission currentPermission=new Permission(1,"LIST_USERS");
+        Group currentGroup= new Group(1,"CREATE_GROUP");
+
+        when(groupService.getGroupById(groupId)).thenReturn(currentGroup);
+        when(permissionService.getPermissionById(permissionId)).thenReturn(currentPermission);
+        when(groupService.deletGroupPermissions(groupId,permissionId)).thenReturn(true);
+
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .delete("/ruru-crafts/group/{groupId}/delete/permission/{permissionId}",groupId,permissionId))
+                .andExpect(status().isOk())
+                .andDo(print());
+
+    }
+
+    @Test
+    @WithMockUser(username = "customer@test.com",authorities = "SCOPE_CUSTOMER",password = "password")
+    void givenUserIsNotGrantedWithScopeAdmin_whenGetGroupPermissionByIdMethod_thenUnauthorized() throws Exception {
+        Integer groupId=1;
+        List<Permission> permissions=new ArrayList<>();
+        Permission permission1=new Permission(1,"LIST_USERS");
+        Permission permission2=new Permission(1,"LIST_PERMISSIONS");
+        Group currentGroup= new Group(1,"CREATE_GROUP");
+
+        when(groupService.getGroupById(groupId)).thenReturn(currentGroup);
+        when(groupService.getPermissionsByGroupId(groupId)).thenReturn(permissions);
+
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/ruru-crafts/group/{groupId}/permissions",groupId))
+                .andExpect(status().isUnauthorized())
+                .andDo(print());
+
+
+    }
+
+    @Test
+    @WithMockUser(username = "admin@test.com",authorities = "SCOPE_ADMIN")
+    void givenUserIsGrantedWithScopeAdmin_whenGetGroupPermissionByIdMethod_thenOk() throws Exception {
+        Integer groupId=1;
+        List<Permission> permissions=new ArrayList<>();
+        Permission permission1=new Permission(1,"LIST_USERS");
+        Permission permission2=new Permission(1,"LIST_PERMISSIONS");
+        Group currentGroup= new Group(1,"CREATE_GROUP");
+
+        when(groupService.getGroupById(groupId)).thenReturn(currentGroup);
+        when(groupService.getPermissionsByGroupId(groupId)).thenReturn(permissions);
+
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/ruru-crafts/group/{groupId}/permissions",groupId))
+                .andExpect(status().isOk())
+                .andDo(print());
 
     }
 }
