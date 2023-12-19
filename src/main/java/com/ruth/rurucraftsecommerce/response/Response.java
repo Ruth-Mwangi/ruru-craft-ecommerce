@@ -13,6 +13,10 @@ public class Response{
         this.message = message;
         this.data = data;
     }
+    public Response(Integer statusCode, String message) {
+        this.statusCode = statusCode;
+        this.message = message;
+    }
 
     public Integer getStatusCode() {
         return statusCode;
