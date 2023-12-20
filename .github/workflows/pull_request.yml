@@ -24,17 +24,10 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y hub
 
-    - name: Extract commit message
-      id: extract_commit_message
-      run: |
-        COMMIT_MESSAGE=$(git log --format=%B -n 1 "${{ github.sha }}")
-        echo "Commit Message: $COMMIT_MESSAGE"
-        echo "COMMIT_MESSAGE=$COMMIT_MESSAGE" >> $GITHUB_ENV
-
     - name: Create Pull Request to dev
       run: |
         if [ "${{ github.event_name }}" == "push" ] && [ "${{ github.ref != 'refs/heads/dev' }}" ]; then
-          hub pull-request -b dev -h "${{ github.ref }}" -m "$COMMIT_MESSAGE" || true
+          hub pull-request -b dev -h "${{ github.ref }}" -m "Automated Pull Request to dev" || true
         fi
       env:
         GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
