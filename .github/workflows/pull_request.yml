@@ -25,10 +25,11 @@ jobs:
         sudo apt-get install -y hub
 
     - name: Extract commit message
+      id: extract_commit_message
       run: |
         COMMIT_MESSAGE=$(git log --format=%B -n 1 "${{ github.sha }}")
         echo "Commit Message: $COMMIT_MESSAGE"
-        echo "::set-env name=COMMIT_MESSAGE::$COMMIT_MESSAGE"
+        echo "COMMIT_MESSAGE=$COMMIT_MESSAGE" >> $GITHUB_ENV
 
     - name: Create Pull Request to dev
       run: |
