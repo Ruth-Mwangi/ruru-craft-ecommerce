@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.NoSuchElementException;
 
-@Tag(name = "6. Products & Product Categories & Product OPtions ", description = "Interact with products, product categories and product options in a system. You can create new ones, modify existing ones, list, or remove ones that are no longer necessary.")
+@Tag(name = "6. Products & Product Categories & Product Options ", description = "Interact with products, product categories and product options in a system. You can create new ones, modify existing ones, list, or remove ones that are no longer necessary.")
 
 @RestController
 @RequestMapping("/ruru-crafts")
@@ -81,7 +81,7 @@ public class ProductController {
     }
 
     @Operation(summary = "This endpoint gets all products and requires user to be authenticated")
-    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
+    @PreAuthorize("hasAuthority('SCOPE_ADMIN') or hasAuthority('SCOPE_CUSTOMER')")
     @GetMapping("/products")
     public ResponseEntity<?> getAllProducts(){
         try {
@@ -97,7 +97,7 @@ public class ProductController {
     }
 
     @Operation(summary = "This endpoint gets all products and requires user to be authenticated")
-    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
+    @PreAuthorize("hasAuthority('SCOPE_ADMIN') or hasAuthority('SCOPE_CUSTOMER')")
     @GetMapping("/product-categories")
     public ResponseEntity<?> getAllProductCategories(){
         try {
@@ -113,7 +113,7 @@ public class ProductController {
     }
 
     @Operation(summary = "This endpoint gets a product by id and requires user to be authenticated")
-    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
+    @PreAuthorize("hasAuthority('SCOPE_ADMIN') or hasAuthority('SCOPE_CUSTOMER')")
     @GetMapping("/product/{id}")
     public ResponseEntity<?> getProductById(@PathVariable("id") Integer id){
         try {
