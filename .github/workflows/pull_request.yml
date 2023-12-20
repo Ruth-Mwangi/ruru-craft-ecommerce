@@ -27,9 +27,7 @@ jobs:
     - name: Create Pull Request to dev
       run: |
         if [ "${{ github.event_name }}" == "push" ] && [ "${{ github.ref != 'refs/heads/dev' }}" ]; then
-          git checkout -b auto-pr-dev
-          git push --set-upstream origin auto-pr-dev
-          hub pull-request -b dev -h auto-pr-dev -m "Automated Pull Request to dev" || true
+          hub pull-request -b dev -h "${{ github.ref }}" -m "Automated Pull Request to dev" || true
         fi
       env:
         GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
