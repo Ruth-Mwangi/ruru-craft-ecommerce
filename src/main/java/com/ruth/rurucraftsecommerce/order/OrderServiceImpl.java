@@ -1,8 +1,16 @@
 package com.ruth.rurucraftsecommerce.order;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import java.util.List;
 
+@Service
 public class OrderServiceImpl implements OrderService{
+    @Autowired
+    private OrderRepository orderRepository;
+    @Autowired
+    private OrderDetailRepository orderDetailRepository;
     @Override
     public Order createOrder(Order order) {
         return null;
